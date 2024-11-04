@@ -14,7 +14,8 @@ export const applyJob = async (req, res) => {
                 message: "Job Id  is required",
                 success: false,
             });
-        }
+        };
+        
 
         const existingApplication = await Application.findOne({ job: jobId, applicant: userId });
 

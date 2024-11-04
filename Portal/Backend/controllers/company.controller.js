@@ -19,7 +19,8 @@ export const registerCompany = async (req, res) => {
                 message: "You can't register same company again",
                 success: false
             })
-        }
+        };
+        
 
         company = await Company.create({
             name: companyName,
