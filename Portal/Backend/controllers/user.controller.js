@@ -2,6 +2,18 @@ import jwt from "jsonwebtoken";
 import { User } from "../models/user.model.js";
 import bcrypt from 'bcryptjs'
 
+
+import { uploadOnCloudinary } from '../utils/cloduinary.js'
+
+export const register = async (req, res) => {
+    try {
+
+        console.log("your path ", req.file);
+        const { fullname, email, phoneNumber, role, password } = req.body;
+
+
+        if (!fullname || !email || !phoneNumber || !role || !password) {
+
 export const register = async (req, res) => {
     try {
         const { fullname, email, phoneNumber, role, password, confirmpassword } = req.body;
@@ -22,6 +34,30 @@ export const register = async (req, res) => {
             })
         }
 
+        const profilePhotoLocalPath = req.file.path
+        console.log("Here is your profile local path", profilePhotoLocalPath);
+        if (!profilePhotoLocalPath) {
+            return res.status(404).json({
+                message: "Profile photo is required",
+                success: false
+            })
+        };
+
+
+
+        const profilePhoto = await uploadOnCloudinary(profilePhotoLocalPath);
+        console.log("Your profile photo ", profilePhoto);
+
+        console.log(profilePhoto);
+
+        if (!profilePhoto) {
+            return res.status(404).json({
+                message: "Profile photo file is required",
+                success: false
+            })
+        };
+
+
         const hashPassword = await bcrypt.hash(password, 10);
 
         await User.create({
@@ -29,9 +65,16 @@ export const register = async (req, res) => {
             email,
             phoneNumber,
             password: hashPassword,
+
+            role,
+            profile: {
+                profilePhoto: profilePhoto.url
+            }
+        });
             confirmpassword: hashPassword,
             role
         })
+
 
         res.status(201).json({
             message: 'User registered successfully',
@@ -133,6 +176,7 @@ export const updateProfile = async (req, res) => {
         const { fullname, email, phoneNumber, skills, bio } = req.body;
         const file = req.file;
 
+        let skillsArray = [];
         let skillsArray;
         if (skills) {
             skillsArray = skills.split(',');
@@ -140,6 +184,7 @@ export const updateProfile = async (req, res) => {
 
 
         const userId = req.id;
+
 
         let user = await User.findById(userId);
 
@@ -157,6 +202,17 @@ export const updateProfile = async (req, res) => {
         if (bio) user.bio = bio;
 
 
+        if (!user) {
+            return res.status(401).json({
+                message: "Invalid user found while updating profile.",
+                success: false
+            })
+        }
+
+
+        user.profile.skills = skillsArray;
+
+
 
         await user.save();
 
@@ -165,8 +221,16 @@ export const updateProfile = async (req, res) => {
             fullname: user.fullname,
             phoneNumber: user.phoneNumber,
             role: user.role,
+            profile: user.profile,
+            skills: user.skillsArray
+        }
+
+
+
+=======
             profile: user.profile
         }
+
 
         return res.status(200).json({
             message: 'Profile updated successfully',

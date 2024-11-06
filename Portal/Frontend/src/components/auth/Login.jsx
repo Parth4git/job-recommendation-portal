@@ -2,8 +2,12 @@ import React, { useState } from "react";
 import Navbar from "../shared/Navbar";
 import { Label } from "@radix-ui/react-label";
 import { Input } from "../ui/input";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { RadioGroup, RadioGroupItem } from "@radix-ui/react-radio-group";
+import axios from 'axios';
+import { User_API_ENDPOINT } from "../utils/constant";
+import { toast } from "sonner";
+
 import axios from "axios";
 import { User_API_ENDPOINT } from "../utils/constant";
 import { toast } from "sonner";
@@ -18,6 +22,8 @@ const Login = () => {
     password: "",
     role: "",
   });
+  const navigate = useNavigate();
+
 
   const { loading } = useSelector((state) => state.auth);
   const navigate = useNavigate();

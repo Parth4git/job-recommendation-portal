@@ -22,15 +22,11 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    confirmpassword: {
-        type: String,
-        required: true,
-    },
 
     role: {
         type: String,
-        enum: ["student", "recruiter"],
-        required: true,
+        enum: ["job-seeker", "recruiter"],
+      required: true,
     },
 
     profile: {

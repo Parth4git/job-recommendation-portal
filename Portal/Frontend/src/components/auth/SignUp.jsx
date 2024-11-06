@@ -19,7 +19,7 @@ const SignUp = () => {
     phoneNumber: "",
     password: "",
     role: "",
-    file: "",
+    profilePhoto: "",
   });
 
   const { loading } = useSelector((state) => state.auth);
@@ -43,7 +43,7 @@ const SignUp = () => {
     formData.append("password", input.password);
     formData.append("role", input.role);
     if (input.file) {
-      formData.append("file", input.file);
+      formData.append("profilePhoto", input.file);
     }
     try {
       dispatch(setLoading(true));
@@ -173,7 +173,7 @@ const SignUp = () => {
               accept="image/*"
               className="cursor-pointer w-1/2"
               onChange={handleFileChange}
-              name="file"
+              name="profilePhoto"
             />
           </div>
 
