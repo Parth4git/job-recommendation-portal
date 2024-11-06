@@ -2,12 +2,16 @@ import jwt from "jsonwebtoken";
 import { User } from "../models/user.model.js";
 import bcrypt from 'bcryptjs'
 
+import { uploadOnCloudinary } from '../utils/cloduinary.js'
+
 export const register = async (req, res) => {
     try {
+
+        console.log("your path ", req.file);
         const { fullname, email, phoneNumber, role, password } = req.body;
 
 
-        if (!fullname || !email || !phoneNumber || !role || !password || !skills) {
+        if (!fullname || !email || !phoneNumber || !role || !password) {
             return res.status(400).json({
                 message: 'Something is missing',
                 success: false
@@ -23,6 +27,29 @@ export const register = async (req, res) => {
             })
         }
 
+        const profilePhotoLocalPath = req.file.path
+        console.log("Here is your profile local path", profilePhotoLocalPath);
+        if (!profilePhotoLocalPath) {
+            return res.status(404).json({
+                message: "Profile photo is required",
+                success: false
+            })
+        };
+
+
+
+        const profilePhoto = await uploadOnCloudinary(profilePhotoLocalPath);
+        console.log("Your profile photo ", profilePhoto);
+
+        console.log(profilePhoto);
+
+        if (!profilePhoto) {
+            return res.status(404).json({
+                message: "Profile photo file is required",
+                success: false
+            })
+        };
+
         const hashPassword = await bcrypt.hash(password, 10);
 
         await User.create({
@@ -30,8 +57,11 @@ export const register = async (req, res) => {
             email,
             phoneNumber,
             password: hashPassword,
-            role
-        })
+            role,
+            profile: {
+                profilePhoto: profilePhoto.url
+            }
+        });
 
         res.status(201).json({
             message: 'User registered successfully',

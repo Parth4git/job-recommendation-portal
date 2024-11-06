@@ -16,7 +16,7 @@ const SignUp = () => {
     password: "",
     // confirmpassword: "",
     role: "",
-    file: "",
+    profilePhoto: "",
   });
 
   const navigate = useNavigate();
@@ -39,7 +39,7 @@ const SignUp = () => {
     // formData.append("confirmpassword", input.confirmpassword);
     formData.append("role", input.role);
     if (input.file) {
-      formData.append("file", input.file);
+      formData.append("profilePhoto", input.file);
     }
     try {
       const res = await axios.post(`${User_API_ENDPOINT}/register`, formData, {
@@ -182,7 +182,7 @@ const SignUp = () => {
               accept="image/*"
               className="cursor-pointer w-1/2"
               onChange={handleFileChange}
-              name="file"
+              name="profilePhoto"
             />
           </div>
 
