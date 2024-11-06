@@ -42,12 +42,15 @@ const jobSchema = new mongoose.Schema({
 
     experience: {
         type: Number,
+
         required: true,
     },
 
     createdBy: {
         type: mongoose.Schema.Types.ObjectId, ref: 'User',
         required: true
+
+        required: true,
     },
 
     applications: [

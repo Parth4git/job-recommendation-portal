@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import { User } from "../models/user.model.js";
 import bcrypt from 'bcryptjs'
 
+
 import { uploadOnCloudinary } from '../utils/cloduinary.js'
 
 export const register = async (req, res) => {
@@ -12,6 +13,12 @@ export const register = async (req, res) => {
 
 
         if (!fullname || !email || !phoneNumber || !role || !password) {
+
+export const register = async (req, res) => {
+    try {
+        const { fullname, email, phoneNumber, role, password, confirmpassword } = req.body;
+
+        if (!fullname || !email || !phoneNumber || !role || !password || !confirmpassword) {
             return res.status(400).json({
                 message: 'Something is missing',
                 success: false
@@ -50,6 +57,7 @@ export const register = async (req, res) => {
             })
         };
 
+
         const hashPassword = await bcrypt.hash(password, 10);
 
         await User.create({
@@ -57,11 +65,16 @@ export const register = async (req, res) => {
             email,
             phoneNumber,
             password: hashPassword,
+
             role,
             profile: {
                 profilePhoto: profilePhoto.url
             }
         });
+            confirmpassword: hashPassword,
+            role
+        })
+
 
         res.status(201).json({
             message: 'User registered successfully',
@@ -164,6 +177,7 @@ export const updateProfile = async (req, res) => {
         const file = req.file;
 
         let skillsArray = [];
+        let skillsArray;
         if (skills) {
             skillsArray = skills.split(',');
         }
@@ -199,6 +213,7 @@ export const updateProfile = async (req, res) => {
         user.profile.skills = skillsArray;
 
 
+
         await user.save();
 
         user = {
@@ -210,6 +225,11 @@ export const updateProfile = async (req, res) => {
             skills: user.skillsArray
         }
 
+
+
+=======
+            profile: user.profile
+        }
 
 
         return res.status(200).json({

@@ -8,6 +8,13 @@ import axios from 'axios';
 import { User_API_ENDPOINT } from "../utils/constant";
 import { toast } from "sonner";
 
+import axios from "axios";
+import { User_API_ENDPOINT } from "../utils/constant";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Button } from "../ui/button";
+import { Loader2 } from "lucide-react";
 
 const Login = () => {
   const [input, setInput] = useState({
@@ -18,6 +25,10 @@ const Login = () => {
   const navigate = useNavigate();
 
 
+  const { loading } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const handleInput = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
   };
@@ -25,6 +36,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      dispatch(setLoading(true));
       const res = await axios.post(`${User_API_ENDPOINT}/login`, input, {
         headers: {
           "Content-Type": "application/json",
@@ -38,6 +50,8 @@ const Login = () => {
     } catch (error) {
       console.log(error);
       toast.error(error.response.data.message);
+    } finally {
+      dispatch(setLoading(false));
     }
   };
 
@@ -115,14 +129,21 @@ const Login = () => {
             </RadioGroup>
           </div>
 
-          <div className="flex flex-col gap-3 py-4">
-            <button
-              type="submit"
-              className="w-full h-10 bg-blue-500 text-white p-1 rounded-md text-sm"
-            >
-              Login
-            </button>
-          </div>
+          {loading ? (
+            <Button className="w-full my-4">
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait
+            </Button>
+          ) : (
+            <div className="flex flex-col gap-3 py-4">
+              <button
+                type="submit"
+                className="w-full h-10 bg-blue-500 text-white p-1 rounded-md text-sm"
+              >
+                Login
+              </button>
+            </div>
+          )}
+
           <span className="text-sm">
             Don&apos;t have an account?{" "}
             <Link to="/register" className="text-blue-500">
